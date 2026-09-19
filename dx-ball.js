@@ -48,6 +48,26 @@ canvas.addEventListener('mouseleave', () => {
   paddle.mouseControlled = false;
 });
 
+// === TOUCH INPUT (Mobile) ===
+let touchActive = false;
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  touchActive = true;
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  mouseX = (touch.clientX - rect.left) * (canvas.width / rect.width);
+  if (ball && ball.stuck) ball.launch();
+}, { passive: false });
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  mouseX = (touch.clientX - rect.left) * (canvas.width / rect.width);
+}, { passive: false });
+canvas.addEventListener('touchend', () => {
+  touchActive = false;
+});
+
 // === UI HELPERS ===
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -223,27 +243,23 @@ function update() {
       hasLaser = false;
     }
     // Fire laser at top of frame
-    if (balls.length > 0) {
-      const b = balls[0];
-      // Laser hits bricks
-      for (const brick of levelManager.bricks) {
-        if (brick.active &&
-            brick.x < paddle.x + paddle.width / 2 + 5 &&
-            brick.x + brick.width > paddle.x + paddle.width / 2 - 5) {
-          if (brick.hit()) {
-            brick.active = false;
-            score += brick.value;
-            particleManager.emit(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.color, 15);
-            sound.play('break');
-            if (Math.random() < 0.2) {
-              const types = Object.keys(POWERUP_TYPES);
-              powerupManager.add(brick.x + brick.width / 2, brick.y, types[Math.floor(Math.random() * types.length)]);
-            }
-            levelManager.checkLevelComplete();
+    // Laser hits bricks
+    for (const brick of levelManager.bricks) {
+      if (brick.active &&
+          brick.x < paddle.x + paddle.width / 2 + 5 &&
+          brick.x + brick.width > paddle.x + paddle.width / 2 - 5) {
+        if (brick.hit()) {
+          brick.active = false;
+          score += brick.value;
+          particleManager.emit(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.color, 15);
+          sound.play('break');
+          if (Math.random() < 0.2) {
+            const types = Object.keys(POWERUP_TYPES);
+            powerupManager.add(brick.x + brick.width / 2, brick.y, types[Math.floor(Math.random() * types.length)]);
           }
-          levelManager.resolveCollision(brick, b);
-          break;
+          levelManager.checkLevelComplete();
         }
+        break;
       }
     }
   }
