@@ -6,17 +6,25 @@ class Paddle {
     this.y = canvasHeight - 30;
     this.speed = 6;
     this.dx = 0;
+    this.mouseControlled = false;
   }
 
-  update(keys, canvasWidth) {
-    this.dx = 0;
-    if (keys['ArrowLeft']) this.dx = -this.speed;
-    if (keys['ArrowRight']) this.dx = this.speed;
-    this.x += this.dx;
+  update(keys, canvasWidth, mouseX) {
+    if (this.mouseControlled) {
+      // Center paddle on mouse X
+      this.x = mouseX - this.width / 2;
+      if (this.x < 0) this.x = 0;
+      if (this.x + this.width > canvasWidth) this.x = canvasWidth - this.width;
+    } else {
+      this.dx = 0;
+      if (keys['ArrowLeft']) this.dx = -this.speed;
+      if (keys['ArrowRight']) this.dx = this.speed;
+      this.x += this.dx;
 
-    // Clamp to canvas
-    if (this.x < 0) this.x = 0;
-    if (this.x + this.width > canvasWidth) this.x = canvasWidth - this.width;
+      // Clamp to canvas
+      if (this.x < 0) this.x = 0;
+      if (this.x + this.width > canvasWidth) this.x = canvasWidth - this.width;
+    }
   }
 
   draw(ctx) {

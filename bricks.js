@@ -130,6 +130,11 @@ class LevelManager {
     this.boss.x = Math.max(0, Math.min(this.canvasWidth - this.boss.width, this.boss.x));
   }
 
+  bossUpdateAll(allBalls) {
+    if (!this.boss || !this.boss.active || allBalls.length === 0) return;
+    this.updateBoss(allBalls[0]);
+  }
+
   bossCollide(ball) {
     if (!this.boss || !this.boss.active) return false;
 
@@ -190,7 +195,13 @@ class LevelManager {
     this.drawBoss(ctx);
   }
 
-  update(ball, powerupManager, particleManager, sound) {
+  update(powerupManager, particleManager, sound) {
+    for (const b of balls) {
+      this.updateSingle(powerupManager, particleManager, sound, b);
+    }
+  }
+
+  updateSingle(powerupManager, particleManager, sound, ball) {
     for (const brick of this.bricks) {
       if (brick.active && brick.collide(ball)) {
         const destroyed = brick.hit();
@@ -213,9 +224,6 @@ class LevelManager {
         break;
       }
     }
-
-    this.updateBoss(ball);
-    this.bossCollide(ball);
   }
 
   resolveCollision(brick, ball) {

@@ -35,6 +35,19 @@ window.addEventListener('keyup', (e) => {
   keys[e.key] = false;
 });
 
+// === MOUSE INPUT ===
+let mouseX = canvas.width / 2;
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+});
+canvas.addEventListener('mouseenter', () => {
+  paddle.mouseControlled = true;
+});
+canvas.addEventListener('mouseleave', () => {
+  paddle.mouseControlled = false;
+});
+
 // === UI HELPERS ===
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -201,7 +214,7 @@ function update() {
   if (gameState !== 'playing') return;
 
   // Update paddle
-  paddle.update(keys, canvas.width);
+  paddle.update(keys, canvas.width, mouseX);
 
   // Update laser timer
   if (hasLaser) {
@@ -248,7 +261,15 @@ function update() {
   }
 
   // Update level
-  levelManager.update(ball, powerupManager, particleManager, sound);
+  levelManager.update(powerupManager, particleManager, sound);
+
+  // Boss movement
+  levelManager.bossUpdateAll(ball);
+
+  // Boss collision
+  for (const b of balls) {
+    levelManager.bossCollide(b);
+  }
 
   // Update powerups
   powerupManager.update(paddle);
