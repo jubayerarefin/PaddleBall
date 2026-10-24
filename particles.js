@@ -18,9 +18,17 @@ class Particle {
   }
 
   draw(ctx) {
+    if (this.life <= 0) return;
     ctx.globalAlpha = this.life;
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.size, this.size);
+    const gradient = ctx.createRadialGradient(
+      this.x, this.y, 0,
+      this.x, this.y, this.size
+    );
+    gradient.addColorStop(0, '#fff');
+    gradient.addColorStop(0.5, this.color);
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(this.x - this.size, this.y - this.size, this.size * 2, this.size * 2);
     ctx.globalAlpha = 1;
   }
 }

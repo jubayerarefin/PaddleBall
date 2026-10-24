@@ -78,7 +78,7 @@ class PowerupManager {
         // Spawn 2 extra balls with slightly different angles
         if (balls.length < 5) {
           for (let i = 0; i < 2; i++) {
-            const b = new Ball(canvas.width, canvas.height);
+            const b = new Ball(canvas.width, canvas.height, sound);
             b.stuck = false;
             b.angle = -Math.PI / 2 + (Math.random() - 0.5) * 1;
             b.dx = b.speed * Math.cos(b.angle);

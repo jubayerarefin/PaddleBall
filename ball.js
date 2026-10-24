@@ -1,9 +1,10 @@
 class Ball {
-  constructor(canvasWidth, canvasHeight) {
+  constructor(canvasWidth, canvasHeight, soundManager) {
     this.radius = 8;
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
     this.speed = 4;
+    this.sound = soundManager;
     this.reset();
   }
 
@@ -33,11 +34,11 @@ class Ball {
   update(paddle, keys) {
     if (this.stuck) {
       this.stickToPaddle(paddle);
-      if (keys[' '] && !this._spacePressed) {
+      if ((keys[' '] || keys['Enter']) && !this._spacePressed) {
         this.launch();
         this._spacePressed = true;
       }
-      if (!keys[' ']) this._spacePressed = false;
+      if (!keys[' '] && !keys['Enter']) this._spacePressed = false;
       return;
     }
 
@@ -77,7 +78,8 @@ class Ball {
       this.dx = spd * Math.cos(this.angle);
       this.dy = spd * Math.sin(this.angle);
       this.y = paddle.y - this.radius;
-      
+      try { this.sound.play('hit'); } catch(e) {}
+
       return 'bounced';
     }
 

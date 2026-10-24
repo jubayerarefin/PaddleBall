@@ -8,9 +8,7 @@ class SoundManager {
   }
 
   play(type) {
-    if (!this.ctx) {
-      try { this.init(); } catch(e) { return; }
-    }
+    if (!this.ctx) return;
 
     try {
       const osc = this.ctx.createOscillator();

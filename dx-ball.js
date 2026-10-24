@@ -21,9 +21,9 @@ let laserTimer = 0;
 // === INPUT ===
 const keys = {};
 window.addEventListener('keydown', (e) => {
-  if (e.key === ' ') e.preventDefault();
+  if (e.key === ' ' || e.key === 'Enter') e.preventDefault();
   keys[e.key] = true;
-  if (e.key === ' ') {
+  if (e.key === ' ' || e.key === 'Enter') {
     if (['start', 'gameOver', 'levelComplete', 'victory'].includes(gameState)) {
       handleScreenAction();
     } else if (gameState === 'playing' && ball && ball.stuck) {
@@ -140,7 +140,7 @@ function startGame() {
   laserTimer = 0;
 
   paddle = new Paddle(canvas.width, canvas.height);
-  ball = new Ball(canvas.width, canvas.height);
+  ball = new Ball(canvas.width, canvas.height, sound);
   ball.stickToPaddle(paddle);
   balls = [ball];
 
@@ -150,6 +150,7 @@ function startGame() {
   powerupManager = new PowerupManager();
   particleManager = new ParticleManager();
   sound = new SoundManager();
+  sound.init();
 
   updateHUD();
   showScreen('playing');
@@ -170,7 +171,7 @@ function nextLevel() {
   }
 
   levelManager.loadLevel(currentLevel);
-  ball.speed = 4;
+  ball.speed = Math.min(8, 4 + (currentLevel - 1) * 0.3);
   ball.reset();
   ball.stickToPaddle(paddle);
   balls = [ball];
@@ -243,7 +244,7 @@ function update() {
       hasLaser = false;
     }
     // Fire laser at top of frame
-    // Laser hits bricks
+    // Fire laser — hit all bricks in paddle center column
     for (const brick of levelManager.bricks) {
       if (brick.active &&
           brick.x < paddle.x + paddle.width / 2 + 5 &&
@@ -259,7 +260,6 @@ function update() {
           }
           levelManager.checkLevelComplete();
         }
-        break;
       }
     }
   }
@@ -306,7 +306,7 @@ function update() {
     if (lives <= 0) {
       gameOver();
     } else {
-      ball.speed = 4;
+      ball.speed = Math.min(8, 4 + (currentLevel - 1) * 0.3);
       ball.reset();
       ball.stickToPaddle(paddle);
       balls = [ball];
