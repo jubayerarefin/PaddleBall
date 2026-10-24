@@ -47,6 +47,9 @@ canvas.addEventListener('mouseenter', () => {
 canvas.addEventListener('mouseleave', () => {
   paddle.mouseControlled = false;
 });
+canvas.addEventListener('click', () => {
+  if (gameState === 'playing' && ball && ball.stuck) ball.launch();
+});
 
 // === TOUCH INPUT (Mobile) ===
 let touchActive = false;
