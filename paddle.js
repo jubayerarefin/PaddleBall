@@ -10,21 +10,20 @@ class Paddle {
   }
 
   update(keys, canvasWidth, mouseX) {
-    if (this.mouseControlled) {
+    const keyboardActive = keys['ArrowLeft'] || keys['ArrowRight'];
+    if (this.mouseControlled && !keyboardActive) {
       // Center paddle on mouse X
       this.x = mouseX - this.width / 2;
-      if (this.x < 0) this.x = 0;
-      if (this.x + this.width > canvasWidth) this.x = canvasWidth - this.width;
-    } else {
+    } else if (keyboardActive) {
       this.dx = 0;
       if (keys['ArrowLeft']) this.dx = -this.speed;
       if (keys['ArrowRight']) this.dx = this.speed;
       this.x += this.dx;
-
-      // Clamp to canvas
-      if (this.x < 0) this.x = 0;
-      if (this.x + this.width > canvasWidth) this.x = canvasWidth - this.width;
     }
+
+    // Clamp to canvas
+    if (this.x < 0) this.x = 0;
+    if (this.x + this.width > canvasWidth) this.x = canvasWidth - this.width;
   }
 
   draw(ctx) {
