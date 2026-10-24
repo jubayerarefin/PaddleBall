@@ -21,7 +21,7 @@ let laserTimer = 0;
 // === INPUT ===
 const keys = {};
 window.addEventListener('keydown', (e) => {
-  if (e.key === ' ' || e.key === 'Enter') e.preventDefault();
+  if (e.key === ' ' || e.key === 'Enter' || e.key.startsWith('Arrow')) e.preventDefault();
   keys[e.key] = true;
   if (e.key === ' ' || e.key === 'Enter') {
     if (['start', 'gameOver', 'levelComplete', 'victory'].includes(gameState)) {
